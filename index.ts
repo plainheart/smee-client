@@ -29,13 +29,23 @@ class Client {
   }
 
   static async createChannel () {
-    return superagent.head('https://smee.io/new').redirects(0).catch((err) => {
+    return superagent.head('https://hook.pipelinesascode.com/new').redirects(0).catch((err) => {
       return err.response.headers.location
     })
   }
 
   onmessage (msg: any) {
+    if (msg.event === 'ready' || msg.data === 'ready') {
+      this.logger.info(`Forwarding ${this.source} to ${this.target}`)
+      return
+    }
+
     const data = JSON.parse(msg.data)
+
+    if ('bodyB' in data) {
+      data.body = Buffer.from(data.bodyB, 'base64').toString('utf8')
+      delete data.bodyB
+    }
 
     const target = url.parse(this.target, true)
     const mergedQuery = Object.assign(target.query, data.query)
@@ -69,7 +79,11 @@ class Client {
   }
 
   start () {
-    const events = new EventSource(this.source);
+    const events = new EventSource(this.source, {
+      headers: {
+        'User-Agent': 'gosmee'
+      }
+    });
 
     // Reconnect immediately
     (events as any).reconnectInterval = 0 // This isn't a valid property of EventSource
@@ -78,7 +92,6 @@ class Client {
     events.addEventListener('open', this.onopen.bind(this))
     events.addEventListener('error', this.onerror.bind(this))
 
-    this.logger.info(`Forwarding ${this.source} to ${this.target}`)
     this.events = events
 
     return events
