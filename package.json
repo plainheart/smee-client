@@ -1,6 +1,6 @@
 {
   "name": "@plainheart/smee-client",
-  "version": "0.0.1-gosmee-pipelinesascode",
+  "version": "0.0.1",
   "description": "Client to proxy webhooks to local host",
   "main": "index.js",
   "bin": {
@@ -49,5 +49,8 @@
   },
   "jest": {
     "preset": "ts-jest"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
