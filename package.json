@@ -1,6 +1,6 @@
 {
   "name": "@plainheart/smee-client",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Client to proxy webhooks to local host",
   "main": "index.js",
   "bin": {
